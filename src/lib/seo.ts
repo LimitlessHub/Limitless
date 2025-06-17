@@ -8,26 +8,26 @@ export interface SEOData {
   schemaMarkup: object | object[];
 }
 
-const getBaseUrl = () => "https://localservices.com"; // To avoid repetition
+const getBaseUrl = () => "https://localservices.com"; 
 
-// Helper to generate the core Organization schema, ensuring consistency.
 const getBaseOrganizationSchema = () => ({
   "@type": "Organization",
   "name": "LocalServices",
   "url": getBaseUrl(),
-  "logo": `${getBaseUrl()}/logo.png`, // Replace with actual logo URL
-  "sameAs": [ // Replace with actual social media URLs
+  "logo": `${getBaseUrl()}/logo.png`,
+  "sameAs": [
     "https://www.facebook.com/localservices",
     "https://www.twitter.com/localservices",
     "https://www.instagram.com/localservices"
   ],
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+966-11-123-4567", // Main contact number
+    "telephone": "+966-11-123-4567",
     "contactType": "Customer Service"
   }
 });
 
+// THIS IS THE MISSING FUNCTION THAT CAUSED THE ERROR
 export function generateGenericServicePageSEO(
   service: Service,
   language: 'en' | 'ar' = 'en'
@@ -51,7 +51,7 @@ export function generateGenericServicePageSEO(
     },
     "areaServed": service.availableCountries.map(code => ({
       "@type": "Country",
-      "name": code // e.g., "SA", "AE"
+      "name": code 
     })),
     "offers": {
       "@type": "Offer",
@@ -78,40 +78,18 @@ export function generateCityPageSEO(
   const cityName = language === 'ar' ? city.nameAr : city.name;
   const countryName = language === 'ar' ? country.nameAr : country.name;
   const baseUrl = getBaseUrl();
-
-  const title = `Local Services in ${cityName} | ${countryName}`;
-  const description = `Find top-rated local services in ${cityName}, ${countryName}. We offer plumbing, cleaning, AC repair, and more with verified professionals.`;
-  const keywords = [
-    `services in ${cityName}`,
-    `local services ${cityName}`,
-    cityName,
-    countryName,
-    ...services.map(s => language === 'ar' ? s.nameAr : s.name)
-  ];
   const canonical = `/${country.slug}/${city.slug}`;
+  const title = `Local Services in ${cityName} | ${countryName}`;
+  const description = `Find top-rated local services in ${cityName}, ${countryName}.`;
+  const keywords = [ `services in ${cityName}`, cityName, countryName, ...services.map(s => language === 'ar' ? s.nameAr : s.name) ];
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": `${baseUrl}/`
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": countryName,
-        "item": `${baseUrl}/${country.slug}`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": cityName,
-        "item": `${baseUrl}${canonical}`
-      }
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${baseUrl}/` },
+      { "@type": "ListItem", "position": 2, "name": countryName, "item": `${baseUrl}/${country.slug}` },
+      { "@type": "ListItem", "position": 3, "name": cityName, "item": `${baseUrl}${canonical}` }
     ]
   };
 
@@ -132,15 +110,8 @@ export function generateCityPageSEO(
     }
   };
 
-  return {
-    title,
-    description,
-    keywords,
-    canonical,
-    schemaMarkup: [breadcrumbSchema, collectionSchema]
-  };
+  return { title, description, keywords, canonical, schemaMarkup: [breadcrumbSchema, collectionSchema] };
 }
-
 
 export function generateServicePageSEO(
   service: Service,
@@ -153,25 +124,9 @@ export function generateServicePageSEO(
   const countryName = language === 'ar' ? country.nameAr : country.name;
   const baseUrl = getBaseUrl();
   const canonical = `/${country.slug}/${city.slug}/${service.slug}`;
-
-  const title = language === 'ar' 
-    ? `${serviceName} في ${cityName} | خدمة احترافية 24/7 | ${countryName}`
-    : `${serviceName} in ${cityName} | Professional 24/7 Service | ${countryName}`;
-
-  const description = language === 'ar'
-    ? `احصل على أفضل خدمة ${serviceName} في ${cityName}, ${countryName}. فنيون معتمدون متاحون 24/7. اتصل الآن للحصول على خدمة سريعة وموثوقة.`
-    : `Get the best ${serviceName} service in ${cityName}, ${countryName}. Certified professionals available 24/7. Call now for fast and reliable service.`;
-
-  const keywords = [
-    serviceName,
-    cityName,
-    countryName,
-    ...service.keywords,
-    language === 'ar' ? 'خدمة سريعة' : 'fast service',
-    language === 'ar' ? 'فنيون معتمدون' : 'certified professionals',
-    '24/7'
-  ];
-
+  const title = language === 'ar' ? `${serviceName} في ${cityName}` : `${serviceName} in ${cityName}`;
+  const description = language === 'ar' ? `احصل على أفضل خدمة ${serviceName} في ${cityName}.` : `Get the best ${serviceName} service in ${cityName}.`;
+  const keywords = [ serviceName, cityName, countryName, ...service.keywords ];
   const schemas: object[] = [];
 
   const breadcrumbSchema = {
@@ -191,12 +146,7 @@ export function generateServicePageSEO(
     "@type": "LocalBusiness",
     "name": `LocalServices - ${cityName}`,
     "image": `${baseUrl}/images/services/${service.slug}.jpg`,
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": cityName,
-      "addressRegion": city.region,
-      "addressCountry": country.code
-    },
+    "address": { "@type": "PostalAddress", "addressLocality": cityName, "addressRegion": city.region, "addressCountry": country.code },
     "telephone": city.phoneNumbers[0],
     "priceRange": "$$",
     "openingHours": "Mo-Su 00:00-23:59",
@@ -207,26 +157,16 @@ export function generateServicePageSEO(
         "name": serviceName,
         "serviceType": service.category,
         "description": language === 'ar' ? service.fullDescriptionAr : service.fullDescription,
-        "areaServed": {
-          "@type": "City",
-          "name": cityName
-        },
-        "provider": {
-          "@id": `${baseUrl}#organization`
-        }
+        "areaServed": { "@type": "City", "name": cityName },
+        "provider": { "@id": `${baseUrl}#organization` }
       },
       "priceCurrency": getCurrencyByCountry(country.code),
       "price": service.basePrice
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": service.rating,
-      "reviewCount": service.reviewCount
-    }
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": service.rating, "reviewCount": service.reviewCount }
   };
   schemas.push(localBusinessSchema);
 
-  // Dynamically add FAQPage schema if FAQs exist
   if (service.faqs && service.faqs.length > 0) {
     const faqSchema = {
       "@context": "https://schema.org",
@@ -234,83 +174,40 @@ export function generateServicePageSEO(
       "mainEntity": service.faqs.map((faq: FAQ) => ({
         "@type": "Question",
         "name": faq.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": faq.answer
-        }
+        "acceptedAnswer": { "@type": "Answer", "text": faq.answer }
       }))
     };
     schemas.push(faqSchema);
   }
 
-  return {
-    title,
-    description,
-    keywords,
-    canonical,
-    schemaMarkup: schemas
-  };
+  return { title, description, keywords, canonical, schemaMarkup: schemas };
 }
 
 export function generateHomepageSEO(language: 'en' | 'ar' = 'en'): SEOData {
-  const title = language === 'ar' 
-    ? 'خدمات محلية في الشرق الأوسط | السعودية، الإمارات، الكويت، مصر'
-    : 'Local Services in Middle East | Saudi Arabia, UAE, Kuwait, Egypt';
-
-  const description = language === 'ar'
-    ? 'اعثر على أفضل الخدمات المحلية في السعودية والإمارات والكويت ومصر. فنيون معتمدون متاحون 24/7 لجميع احتياجاتك المنزلية والتجارية.'
-    : 'Find the best local services in Saudi Arabia, UAE, Kuwait, and Egypt. Certified professionals available 24/7 for all your home and business needs.';
-
-  const keywords = [
-    language === 'ar' ? 'خدمات محلية' : 'local services',
-    language === 'ar' ? 'السعودية' : 'Saudi Arabia',
-    language === 'ar' ? 'الإمارات' : 'UAE',
-    language === 'ar' ? 'الكويت' : 'Kuwait',
-    language === 'ar' ? 'مصر' : 'Egypt',
-    language === 'ar' ? 'فنيون' : 'technicians',
-    '24/7'
-  ];
-
+  const title = language === 'ar' ? 'خدمات محلية في الشرق الأوسط' : 'Local Services in Middle East';
+  const description = language === 'ar' ? 'اعثر على أفضل الخدمات المحلية في السعودية والإمارات والكويت ومصر.' : 'Find the best local services in Saudi Arabia, UAE, Kuwait, and Egypt.';
+  const keywords = [ 'local services', 'Saudi Arabia', 'UAE', 'Kuwait', 'Egypt' ];
   const organizationSchema = getBaseOrganizationSchema();
   const baseUrl = getBaseUrl();
-
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "LocalServices",
     "url": baseUrl,
     "description": description,
-    "publisher": {
-      "@id": organizationSchema.url + "#organization"
-    },
+    "publisher": { "@id": organizationSchema.url + "#organization" },
     "potentialAction": {
       "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${baseUrl}/services?q={search_term_string}`
-      },
+      "target": { "@type": "EntryPoint", "urlTemplate": `${baseUrl}/services?q={search_term_string}` },
       "query-input": "required name=search_term_string"
     },
     "inLanguage": language
   };
-  
   organizationSchema["@id"] = organizationSchema.url + "#organization";
-
-  return {
-    title,
-    description,
-    keywords,
-    canonical: '/',
-    schemaMarkup: [organizationSchema, websiteSchema]
-  };
+  return { title, description, keywords, canonical: '/', schemaMarkup: [organizationSchema, websiteSchema] };
 }
 
 function getCurrencyByCountry(countryCode: string): string {
-  const currencies: Record<string, string> = {
-    'SA': 'SAR',
-    'AE': 'AED',
-    'KW': 'KWD',
-    'EG': 'EGP'
-  };
+  const currencies: Record<string, string> = { 'SA': 'SAR', 'AE': 'AED', 'KW': 'KWD', 'EG': 'EGP' };
   return currencies[countryCode] || 'USD';
 }
