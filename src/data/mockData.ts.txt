@@ -1,0 +1,85 @@
+import { Country, Service, City } from '@/types';
+
+export const countries: Country[] = [
+  { id: '1', name: 'Saudi Arabia', nameAr: 'المملكة العربية السعودية', code: 'SA', slug: 'sa', phonePrefix: '+966', emergencyNumber: '911', currency: 'SAR', currencyAr: 'ريال سعودي', isActive: true },
+  { id: '2', name: 'United Arab Emirates', nameAr: 'دولة الإمارات العربية المتحدة', code: 'AE', slug: 'ae', phonePrefix: '+971', emergencyNumber: '999', currency: 'AED', currencyAr: 'درهم إماراتي', isActive: true },
+  { id: '3', name: 'Kuwait', nameAr: 'دولة الكويت', code: 'KW', slug: 'kw', phonePrefix: '+965', emergencyNumber: '112', currency: 'KWD', currencyAr: 'دينار كويتي', isActive: true },
+  { id: '4', name: 'Egypt', nameAr: 'جمهورية مصر العربية', code: 'EG', slug: 'eg', phonePrefix: '+20', emergencyNumber: '122', currency: 'EGP', currencyAr: 'جنيه مصري', isActive: true }
+];
+
+export const cities: City[] = [
+  // Saudi Arabia Cities
+  { id: 'sa-1', name: 'Riyadh', nameAr: 'الرياض', slug: 'riyadh', countryId: '1', region: 'Riyadh Province', regionAr: 'منطقة الرياض', phoneNumbers: ['+966-11-123-4567'], whatsappNumbers: ['+966-50-123-4567'], coordinates: { lat: 24.7136, lng: 46.6753 }, isCapital: true },
+  { id: 'sa-2', name: 'Jeddah', nameAr: 'جدة', slug: 'jeddah', countryId: '1', region: 'Makkah Province', regionAr: 'منطقة مكة المكرمة', phoneNumbers: ['+966-12-123-4567'], whatsappNumbers: ['+966-55-123-4567'], coordinates: { lat: 21.4858, lng: 39.1925 } },
+  { id: 'sa-3', name: 'Dammam', nameAr: 'الدمام', slug: 'dammam', countryId: '1', region: 'Eastern Province', regionAr: 'المنطقة الشرقية', phoneNumbers: ['+966-13-123-4567'], whatsappNumbers: ['+966-53-123-4567'], coordinates: { lat: 26.4207, lng: 50.0888 } },
+  
+  // UAE Cities
+  { id: 'ae-1', name: 'Dubai', nameAr: 'دبي', slug: 'dubai', countryId: '2', region: 'Dubai Emirate', regionAr: 'إمارة دبي', phoneNumbers: ['+971-4-123-4567'], whatsappNumbers: ['+971-50-123-4567'], coordinates: { lat: 25.2048, lng: 55.2708 } },
+  { id: 'ae-2', name: 'Abu Dhabi', nameAr: 'أبوظبي', slug: 'abu-dhabi', countryId: '2', region: 'Abu Dhabi Emirate', regionAr: 'إمارة أبوظبي', phoneNumbers: ['+971-2-123-4567'], whatsappNumbers: ['+971-56-123-4567'], coordinates: { lat: 24.4539, lng: 54.3773 }, isCapital: true },
+  { id: 'ae-3', name: 'Sharjah', nameAr: 'الشارقة', slug: 'sharjah', countryId: '2', region: 'Sharjah Emirate', regionAr: 'إمارة الشارقة', phoneNumbers: ['+971-6-123-4567'], whatsappNumbers: ['+971-55-123-4567'], coordinates: { lat: 25.3463, lng: 55.4209 } },
+
+  // Kuwait Cities
+  { id: 'kw-1', name: 'Kuwait City', nameAr: 'مدينة الكويت', slug: 'kuwait-city', countryId: '3', region: 'Capital Governorate', regionAr: 'محافظة العاصمة', phoneNumbers: ['+965-22-123-456'], whatsappNumbers: ['+965-99-123-456'], coordinates: { lat: 29.3759, lng: 47.9774 }, isCapital: true },
+  
+  // Egypt Cities
+  { id: 'eg-1', name: 'Cairo', nameAr: 'القاهرة', slug: 'cairo', countryId: '4', region: 'Cairo Governorate', regionAr: 'محافظة القاهرة', phoneNumbers: ['+20-2-2123-4567'], whatsappNumbers: ['+20-10-1234-5678'], coordinates: { lat: 30.0444, lng: 31.2357 }, isCapital: true },
+];
+
+export const services: Service[] = [
+  // Plumbing
+  {
+    id: 'emergency-plumbing', slug: 'emergency-plumbing', name: 'Emergency Plumbing', nameAr: 'سباكة طارئة', category: 'Plumbing', categoryAr: 'السباكة',
+    description: '24/7 emergency plumbing for leaks and clogs.',
+    descriptionAr: 'خدمات سباكة طارئة 24/7 للتسريبات والانسدادات.',
+    fullDescription: "Our 24/7 emergency plumbing team is ready to handle leaks, clogs, water heater issues, and burst pipes. We ensure a fast and durable fix.",
+    fullDescriptionAr: "نقدم خدمات السباكة الطارئة على مدار الساعة. فريقنا جاهز للتعامل مع التسريبات، الانسدادات، مشاكل السخانات، وانفجار المواسير. نستخدم أحدث المعدات لضمان حل المشكلة بشكل فوري ودائم.",
+    icon: 'wrench', basePrice: 150, currency: 'SAR', estimatedDuration: '1-2 hours', estimatedDurationAr: '1-2 ساعة', rating: 4.8, reviewCount: 1250, isPopular: true, isEmergency: true, isActive: true,
+    keywords: ['leak', 'clog', 'pipe'], availableCountries: ['SA', 'AE', 'KW', 'EG']
+  },
+  {
+    id: 'pipe-repair', slug: 'pipe-repair', name: 'Pipe Repair', nameAr: 'إصلاح الأنابيب', category: 'Plumbing', categoryAr: 'السباكة',
+    description: 'Professional pipe repair and replacement services.',
+    descriptionAr: 'خدمات إصلاح واستبدال الأنابيب بشكل احترافي.',
+    fullDescription: 'We handle all types of pipe repairs, from minor leaks to major replacements. Using high-quality materials, we guarantee a long-lasting solution for your plumbing system.',
+    fullDescriptionAr: 'نتعامل مع جميع أنواع إصلاحات الأنابيب، من التسريبات الصغيرة إلى الاستبدالات الكبرى. باستخدام مواد عالية الجودة، نضمن حلاً طويل الأمد لنظام السباكة لديك.',
+    icon: 'wrench', basePrice: 250, currency: 'SAR', estimatedDuration: '2-4 hours', estimatedDurationAr: '2-4 ساعات', rating: 4.7, reviewCount: 890, isPopular: false, isEmergency: false, isActive: true,
+    keywords: ['pipe', 'repair', 'leak'], availableCountries: ['SA', 'AE', 'KW', 'EG']
+  },
+  
+  // Electrical
+  {
+    id: 'emergency-electrical', slug: 'emergency-electrical', name: 'Emergency Electrical', nameAr: 'كهرباء طارئة', category: 'Electrical', categoryAr: 'الكهرباء',
+    description: 'Urgent electrical services for power outages and hazards.',
+    descriptionAr: 'خدمات كهرباء عاجلة لانقطاع التيار والمخاطر الكهربائية.',
+    fullDescription: 'Our emergency electricians are available 24/7 to handle power outages, short circuits, and other electrical hazards. We prioritize safety and rapid response.',
+    fullDescriptionAr: 'كهربائيو الطوارئ لدينا متاحون على مدار الساعة للتعامل مع انقطاع التيار، الشورت الكهربائي، والمخاطر الأخرى. أولويتنا هي السلامة والاستجابة السريعة.',
+    icon: 'zap', basePrice: 180, currency: 'SAR', estimatedDuration: '1-3 hours', estimatedDurationAr: '1-3 ساعة', rating: 4.9, reviewCount: 1450, isPopular: true, isEmergency: true, isActive: true,
+    keywords: ['power outage', 'short circuit'], availableCountries: ['SA', 'AE', 'KW', 'EG']
+  },
+  {
+    id: 'wiring-installation', slug: 'wiring-installation', name: 'Wiring Installation', nameAr: 'تركيب الأسلاك', category: 'Electrical', categoryAr: 'الكهرباء',
+    description: 'Professional electrical wiring and fixture installation.',
+    descriptionAr: 'تركيب احترافي للأسلاك والتمديدات الكهربائية.',
+    fullDescription: 'Full wiring services for new constructions and renovations, including outlet, switch, and lighting fixture installation.',
+    fullDescriptionAr: 'خدمات تمديد أسلاك كاملة للمباني الجديدة والتجديدات، وتشمل تركيب المقابس والمفاتيح ووحدات الإضاءة.',
+    icon: 'zap', basePrice: 300, currency: 'SAR', estimatedDuration: '4-8 hours', estimatedDurationAr: '4-8 ساعات', rating: 4.8, reviewCount: 720, isPopular: false, isEmergency: false, isActive: true,
+    keywords: ['wiring', 'outlets', 'lighting'], availableCountries: ['SA', 'AE', 'KW', 'EG']
+  },
+];
+
+export const faqData = [
+  { serviceId: 'emergency-plumbing', question: 'ما هي تكلفة الخدمة الطارئة؟', answer: 'تعتمد التكلفة على طبيعة المشكلة والوقت. نقدم كشفًا مبدئيًا وتحديدًا للتكلفة قبل البدء بالعمل.' },
+  { serviceId: 'emergency-plumbing', question: 'هل تقدمون ضمانًا على الإصلاح؟', answer: 'نعم، جميع خدماتنا تأتي مع ضمان لمدة 30 يومًا على الأقل على العمل المنجز.' },
+  { serviceId: 'pipe-repair', question: 'ما أنواع الأنابيب التي تقومون بإصلاحها؟', answer: 'نقوم بإصلاح جميع أنواع الأنابيب بما في ذلك النحاس، PVC، والبولي إيثيلين.' },
+  { serviceId: 'emergency-electrical', question: 'هل يمكنكم التعامل مع انقطاع التيار الكهربائي الكامل؟', answer: 'نعم، فنيونا مؤهلون لتحديد سبب انقطاع التيار وإصلاحه بأمان تام.' },
+];
+
+type CoverageData = {
+  [cityId: string]: string[];
+};
+
+export const coverageData: CoverageData = {
+  'sa-1': ['الملز', 'العليا', 'النسيم', 'الروضة', 'الشفاء'], // Riyadh
+  'ae-1': ['ديرة', 'جميرا', 'البرشاء', 'دبي مارينا', 'الخليج التجاري'], // Dubai
+  'ae-2': ['جزيرة الريم', 'الخالدية', 'شارع المطار', 'المشرف', 'مدينة محمد بن زايد'], // Abu Dhabi
+};
