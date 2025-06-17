@@ -83,3 +83,5 @@ LocalServices is a comprehensive platform connecting customers with verified loc
 - Multi-language expansion (French for North Africa)
 
 This platform serves the growing demand for reliable home services in the Middle East market, with localized approach for each country's specific needs and cultural preferences.
+
+Developed by mحmd Yunus
