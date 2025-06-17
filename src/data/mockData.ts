@@ -1,9 +1,3 @@
-// src/data/mockData.ts - PART 1 (THE GEOGRAPHIC MASTER PLAN)
-// This is the definitive, fully expanded geographic data.
-// Replace your existing 'cities' and 'coverageData' arrays with these.
-
-// ... (The 'countries' array remains the same) ...
-
 // == THE DEFINITIVE CITIES DATABASE (52 STRATEGIC LOCATIONS) ==
 export const cities: City[] = [
   // Saudi Arabia Cities (Expanded to 17)
