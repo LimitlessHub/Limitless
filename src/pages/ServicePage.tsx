@@ -70,7 +70,7 @@ const ServicePage = () => {
         <p className="text-gray-300 whitespace-pre-line leading-relaxed">{(currentService as any).fullDescriptionAr || 'وصف الخدمة غير متوفر حاليًا.'}</p>
       </div>
     )},
-    { value: "faq", label: "الأسئلة الشائعة", content: <ServiceFAQ serviceId={currentService.slug} /> },
+    { value: "faq", label: "الأسئلة الشائعة", content: <ServiceFAQ faqs={currentService.faqs} /> },
     { value: "coverage", label: "مناطق التغطية", content: <ServiceCoverage cityId={currentCity.id} /> },
   ];
 
