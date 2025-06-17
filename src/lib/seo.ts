@@ -28,6 +28,47 @@ const getBaseOrganizationSchema = () => ({
   }
 });
 
+export function generateGenericServicePageSEO(
+  service: Service,
+  language: 'en' | 'ar' = 'en'
+): SEOData {
+  const serviceName = language === 'ar' ? service.nameAr : service.name;
+  const description = language === 'ar' ? service.descriptionAr : service.description;
+  const baseUrl = getBaseUrl();
+  const canonical = `/services/${service.slug}`;
+
+  const title = `${serviceName} | Information and Available Locations`;
+  const keywords = [...service.keywords, serviceName, service.category];
+
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": service.category,
+    "name": serviceName,
+    "description": description,
+    "provider": {
+      "@id": `${baseUrl}#organization`
+    },
+    "areaServed": service.availableCountries.map(code => ({
+      "@type": "Country",
+      "name": code // e.g., "SA", "AE"
+    })),
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": service.currency,
+      "price": service.basePrice
+    }
+  };
+
+  return {
+    title,
+    description,
+    keywords,
+    canonical,
+    schemaMarkup: serviceSchema,
+  };
+}
+
 export function generateCityPageSEO(
   city: City,
   country: Country,
