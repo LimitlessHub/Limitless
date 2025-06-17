@@ -29,6 +29,11 @@ export interface City {
   isCapital?: boolean;
 }
 
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
 export interface Service {
   id: string;
   name: string;
@@ -54,4 +59,5 @@ export interface Service {
   isActive: boolean;
   keywords: string[];
   availableCountries: string[];
+  faqs?: FAQ[]; // Add optional faqs property
 }
