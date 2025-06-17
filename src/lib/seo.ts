@@ -1,4 +1,3 @@
-
 import { Country, Service, City } from '@/types';
 
 export interface SEOData {
@@ -6,8 +5,101 @@ export interface SEOData {
   description: string;
   keywords: string[];
   canonical: string;
-  schemaMarkup: object;
+  schemaMarkup: object | object[];
 }
+
+const getBaseUrl = () => "https://localservices.com"; // To avoid repetition
+
+// Helper to generate the core Organization schema, ensuring consistency.
+const getBaseOrganizationSchema = () => ({
+  "@type": "Organization",
+  "name": "LocalServices",
+  "url": getBaseUrl(),
+  "logo": `${getBaseUrl()}/logo.png`, // Replace with actual logo URL
+  "sameAs": [ // Replace with actual social media URLs
+    "https://www.facebook.com/localservices",
+    "https://www.twitter.com/localservices",
+    "https://www.instagram.com/localservices"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+966-11-123-4567", // Main contact number
+    "contactType": "Customer Service"
+  }
+});
+
+export function generateCityPageSEO(
+  city: City,
+  country: Country,
+  services: Service[],
+  language: 'en' | 'ar' = 'en'
+): SEOData {
+  const cityName = language === 'ar' ? city.nameAr : city.name;
+  const countryName = language === 'ar' ? country.nameAr : country.name;
+  const baseUrl = getBaseUrl();
+
+  const title = `Local Services in ${cityName} | ${countryName}`;
+  const description = `Find top-rated local services in ${cityName}, ${countryName}. We offer plumbing, cleaning, AC repair, and more with verified professionals.`;
+  const keywords = [
+    `services in ${cityName}`,
+    `local services ${cityName}`,
+    cityName,
+    countryName,
+    ...services.map(s => language === 'ar' ? s.nameAr : s.name)
+  ];
+  const canonical = `/${country.slug}/${city.slug}`;
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": `${baseUrl}/`
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": countryName,
+        "item": `${baseUrl}/${country.slug}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": cityName,
+        "item": `${baseUrl}${canonical}`
+      }
+    ]
+  };
+
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": title,
+    "description": description,
+    "url": `${baseUrl}${canonical}`,
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": services.map((service, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "url": `${baseUrl}/${country.slug}/${city.slug}/${service.slug}`,
+        "name": language === 'ar' ? service.nameAr : service.name
+      }))
+    }
+  };
+
+  return {
+    title,
+    description,
+    keywords,
+    canonical,
+    schemaMarkup: [breadcrumbSchema, collectionSchema]
+  };
+}
+
 
 export function generateServicePageSEO(
   service: Service,
@@ -39,6 +131,7 @@ export function generateServicePageSEO(
 
   const canonical = `/${country.slug}/${city.slug}/${service.slug}`;
 
+  // This schema will be enhanced in a future step.
   const schemaMarkup = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -100,31 +193,38 @@ export function generateHomepageSEO(language: 'en' | 'ar' = 'en'): SEOData {
     '24/7'
   ];
 
-  const schemaMarkup = {
+  const organizationSchema = getBaseOrganizationSchema();
+  const baseUrl = getBaseUrl();
+
+  const websiteSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "WebSite",
     "name": "LocalServices",
+    "url": baseUrl,
     "description": description,
-    "url": "https://localservices.com",
-    "areaServed": [
-      { "@type": "Country", "name": "Saudi Arabia" },
-      { "@type": "Country", "name": "United Arab Emirates" },
-      { "@type": "Country", "name": "Kuwait" },
-      { "@type": "Country", "name": "Egypt" }
-    ],
-    "serviceType": [
-      "Home Services",
-      "Business Services",
-      "Emergency Services"
-    ]
+    "publisher": {
+      "@id": organizationSchema.url + "#organization"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${baseUrl}/services?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "inLanguage": language
   };
+  
+  // Assign IDs for interconnectivity
+  organizationSchema["@id"] = organizationSchema.url + "#organization";
 
   return {
     title,
     description,
     keywords,
     canonical: '/',
-    schemaMarkup
+    schemaMarkup: [organizationSchema, websiteSchema] // Return an array of schemas
   };
 }
 
