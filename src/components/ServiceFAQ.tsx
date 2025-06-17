@@ -1,24 +1,23 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { faqData } from "@/data/mockData";
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useMemo } from 'react';
+import { FAQ } from "@/types"; // Import the FAQ type
 
 interface ServiceFAQProps {
-  serviceId: string;
+  faqs?: FAQ[]; // Accept an array of FAQs directly as a prop
 }
 
-export default function ServiceFAQ({ serviceId }: ServiceFAQProps) {
+export default function ServiceFAQ({ faqs }: ServiceFAQProps) {
     const { language } = useLanguage();
-    const serviceFaqs = useMemo(() => faqData.filter(faq => faq.serviceId === serviceId), [serviceId]);
     
-    if (serviceFaqs.length === 0) {
+    // Check if the faqs prop is provided and has items
+    if (!faqs || faqs.length === 0) {
         return <p className={`text-blue-200 ${language === 'ar' ? 'text-right' : 'text-left'}`}>لا توجد أسئلة شائعة لهذه الخدمة حاليًا.</p>;
     }
 
     return (
         <div dir={language === 'ar' ? 'rtl' : 'ltr'}>
             <Accordion type="single" collapsible className="w-full">
-                {serviceFaqs.map((faq, index) => (
+                {faqs.map((faq, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="border-white/20">
                         <AccordionTrigger className={`hover:no-underline text-white text-base ${language === 'ar' ? 'text-right' : 'text-left'}`}>
                            {faq.question}
