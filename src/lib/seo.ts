@@ -1,4 +1,4 @@
-import { Country, Service, City } from '@/types';
+import { Country, Service, City, FAQ } from '@/types';
 
 export interface SEOData {
   title: string;
@@ -131,6 +131,8 @@ export function generateServicePageSEO(
     '24/7'
   ];
 
+  const schemas: object[] = [];
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -141,12 +143,13 @@ export function generateServicePageSEO(
       { "@type": "ListItem", "position": 4, "name": serviceName, "item": `${baseUrl}${canonical}` }
     ]
   };
+  schemas.push(breadcrumbSchema);
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": `LocalServices - ${cityName}`,
-    "image": `${baseUrl}/images/services/${service.slug}.jpg`, // Assumes an image path convention
+    "image": `${baseUrl}/images/services/${service.slug}.jpg`,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": cityName,
@@ -154,9 +157,8 @@ export function generateServicePageSEO(
       "addressCountry": country.code
     },
     "telephone": city.phoneNumbers[0],
-    "priceRange": "$$", // This can be made dynamic later
+    "priceRange": "$$",
     "openingHours": "Mo-Su 00:00-23:59",
-    // Nest the specific service being offered
     "makesOffer": {
       "@type": "Offer",
       "itemOffered": {
@@ -169,7 +171,7 @@ export function generateServicePageSEO(
           "name": cityName
         },
         "provider": {
-          "@id": `${baseUrl}#organization` // Link back to the main organization
+          "@id": `${baseUrl}#organization`
         }
       },
       "priceCurrency": getCurrencyByCountry(country.code),
@@ -181,13 +183,31 @@ export function generateServicePageSEO(
       "reviewCount": service.reviewCount
     }
   };
+  schemas.push(localBusinessSchema);
+
+  // Dynamically add FAQPage schema if FAQs exist
+  if (service.faqs && service.faqs.length > 0) {
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": service.faqs.map((faq: FAQ) => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    };
+    schemas.push(faqSchema);
+  }
 
   return {
     title,
     description,
     keywords,
     canonical,
-    schemaMarkup: [breadcrumbSchema, localBusinessSchema]
+    schemaMarkup: schemas
   };
 }
 
@@ -233,7 +253,6 @@ export function generateHomepageSEO(language: 'en' | 'ar' = 'en'): SEOData {
     "inLanguage": language
   };
   
-  // Assign IDs for interconnectivity
   organizationSchema["@id"] = organizationSchema.url + "#organization";
 
   return {
@@ -241,7 +260,7 @@ export function generateHomepageSEO(language: 'en' | 'ar' = 'en'): SEOData {
     description,
     keywords,
     canonical: '/',
-    schemaMarkup: [organizationSchema, websiteSchema] // Return an array of schemas
+    schemaMarkup: [organizationSchema, websiteSchema]
   };
 }
 
