@@ -1,7 +1,7 @@
-
 import { Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
+// Define the shape of a single testimonial for type safety and clarity
 interface Testimonial {
   id: string;
   name: string;
@@ -12,42 +12,16 @@ interface Testimonial {
   date: string;
 }
 
+// The component now only needs the testimonials array to render.
 interface TestimonialsProps {
   testimonials: Testimonial[];
-  serviceId: string;
-  cityId: string;
 }
 
-export default function Testimonials({ testimonials, serviceId, cityId }: TestimonialsProps) {
-  const displayTestimonials = testimonials.length > 0 ? testimonials : [
-    {
-      id: '1',
-      name: 'أحمد محمد',
-      rating: 5,
-      comment: 'خدمة ممتازة وسريعة، الفني وصل في الوقت المحدد وحل المشكلة بكفاءة عالية.',
-      serviceId,
-      city: cityId,
-      date: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'فاطمة علي',
-      rating: 5,
-      comment: 'أنصح بهذه الخدمة، التعامل احترافي والأسعار مناسبة جداً.',
-      serviceId,
-      city: cityId,
-      date: '2024-01-10'
-    },
-    {
-      id: '3',
-      name: 'محمد سالم',
-      rating: 4,
-      comment: 'خدمة جيدة ومتوفرة على مدار الساعة، شكراً لكم.',
-      serviceId,
-      city: cityId,
-      date: '2024-01-05'
-    }
-  ];
+export default function Testimonials({ testimonials }: TestimonialsProps) {
+  // If no testimonials are provided, the component renders nothing.
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-16 bg-white/5 backdrop-blur-sm">
@@ -57,7 +31,7 @@ export default function Testimonials({ testimonials, serviceId, cityId }: Testim
         </h2>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayTestimonials.map((testimonial) => (
+          {testimonials.map((testimonial) => (
             <Card key={testimonial.id} className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
