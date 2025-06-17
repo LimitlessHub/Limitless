@@ -8,22 +8,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { getCountries, getServices, getCities } from '@/lib/cms';
 import { Country, Service, City } from '@/types';
 import SEOHead from '@/components/SEOHead';
-import { SEOData } from '@/lib/seo';
-import ServiceIcon from '@/components/ServiceIcon'; // <-- ١. استيراد مكون الأيقونات
-
-// ... (باقي الكود والـ SEO helper functions تبقى كما هي)
-const generateCityPageSEO = (city: City, country: Country, services: Service[], language: string, t: (key: string) => string): SEOData => {
-  const cityName = language === 'ar' ? city.nameAr : city.name;
-  const countryName = language === 'ar' ? country.nameAr : country.name;
-  return {
-    title: `${t('city.servicesIn')} ${cityName} | ${countryName}`,
-    description: `${t('city.reliableServices')} ${cityName}.`,
-    keywords: [cityName, countryName, ...services.map(s => language === 'ar' ? s.nameAr : s.name)],
-    canonical: `/${country.slug}/${city.slug}`,
-    schemaMarkup: { "@context": "https://schema.org", "@type": "CollectionPage", "name": `${t('city.servicesIn')} ${cityName}`, "description": `All available services in ${cityName}, ${countryName}.`, "url": `${window.location.origin}/${country.slug}/${city.slug}` }
-  };
-};
-
+import { SEOData, generateCityPageSEO } from '@/lib/seo'; // Updated Import
+import ServiceIcon from '@/components/ServiceIcon';
 
 const CityPage = () => {
   const { country: countrySlug, city: citySlug } = useParams();
@@ -54,7 +40,8 @@ const CityPage = () => {
   if (loading) { return (<Layout><div className="min-h-screen flex items-center justify-center"><div className="text-white text-xl">{t('loading')}</div></div></Layout>); }
   if (!currentCountry || !currentCity) { return (<Layout><div className="min-h-screen flex items-center justify-center"><div className="text-white text-xl">{t('city.notFound')}</div></div></Layout>); }
 
-  const seoData = generateCityPageSEO(currentCity, currentCountry, availableServices, language, t);
+  // Now using the centralized SEO function
+  const seoData = generateCityPageSEO(currentCity, currentCountry, availableServices, language);
 
   return (
     <Layout>
