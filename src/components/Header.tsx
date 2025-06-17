@@ -1,19 +1,35 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Menu, Phone, Globe, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 
+// Define navigation item structure
+interface NavItem {
+  path: string;
+  labelKey: string;
+  children?: NavItem[]; // For dropdowns
+}
+
 export default function Header() {
   const { language, toggleLanguage, t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const countries = [
-    { name: t('nav.saudi'), path: '/sa' },
-    { name: t('nav.uae'), path: '/ae' },
-    { name: t('nav.kuwait'), path: '/kw' },
-    { name: t('nav.egypt'), path: '/eg' }
-  ];
+  // Data-driven navigation structure
+  const navLinks = useMemo((): NavItem[] => ([
+    { path: '/', labelKey: 'nav.home' },
+    {
+      path: '#', labelKey: 'nav.countries', children: [
+        { path: '/sa', labelKey: 'nav.saudi' },
+        { path: '/ae', labelKey: 'nav.uae' },
+        { path: '/kw', labelKey: 'nav.kuwait' },
+        { path: '/eg', labelKey: 'nav.egypt' }
+      ]
+    },
+    { path: '/services', labelKey: 'nav.services' },
+    { path: '/about', labelKey: 'nav.about' },
+    { path: '/contact', labelKey: 'nav.contact' },
+  ]), [language]); // Re-evaluate if language changes, to get new 't' function values if needed
 
   const closeMenu = () => setIsMobileMenuOpen(false);
 
@@ -27,41 +43,36 @@ export default function Header() {
             </Link>
           </div>
           
-          {/* -- FIX 1: Replaced space-x-6 with gap-x-6 for robust RTL/LTR spacing.
-            -- This will fix the issue of "الرئيسية" being too close to the next item.
-          */}
+          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-x-6">
-            <Link to="/" className="text-blue-100 hover:text-white transition-colors text-sm font-medium">{t('nav.home')}</Link>
-            
-            <div className="relative group">
-              <button className="text-blue-100 hover:text-white transition-colors flex items-center text-sm font-medium">
-                {t('nav.countries')}
-                {/* -- FIX 2: Added 'ms-1' (margin-start) instead of 'ml-1' for RTL/LTR compatibility.
-                  -- This ensures the icon has a leading margin in both languages.
-                */}
-                <ChevronDown className="w-4 h-4 ms-1 transition-transform group-hover:rotate-180" />
-              </button>
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                <div className="py-1">
-                  {countries.map((country) => (
-                    <Link key={country.path} to={country.path} className="block px-4 py-2 text-gray-800 hover:bg-blue-50 text-sm">
-                      {country.name}
-                    </Link>
-                  ))}
+            {navLinks.map((link) => 
+              link.children ? (
+                <div key={link.labelKey} className="relative group">
+                  <button className="text-blue-100 hover:text-white transition-colors flex items-center text-sm font-medium">
+                    {t(link.labelKey)}
+                    <ChevronDown className="w-4 h-4 ms-1 transition-transform group-hover:rotate-180" />
+                  </button>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="py-1">
+                      {link.children.map((child) => (
+                        <Link key={child.path} to={child.path} className="block px-4 py-2 text-gray-800 hover:bg-blue-50 text-sm">
+                          {t(child.labelKey)}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            <Link to="/services" className="text-blue-100 hover:text-white transition-colors text-sm font-medium">{t('nav.services')}</Link>
-            <Link to="/about" className="text-blue-100 hover:text-white transition-colors text-sm font-medium">{t('nav.about')}</Link>
-            <Link to="/contact" className="text-blue-100 hover:text-white transition-colors text-sm font-medium">{t('nav.contact')}</Link>
+              ) : (
+                <Link key={link.path} to={link.path} className="text-blue-100 hover:text-white transition-colors text-sm font-medium">
+                  {t(link.labelKey)}
+                </Link>
+              )
+            )}
           </nav>
           
-          {/* FIX 3: Applied 'gap' to the container for consistent spacing of buttons. */}
           <div className="flex items-center gap-x-2">
             <Button variant="ghost" size="sm" onClick={toggleLanguage} className="text-white hover:bg-white/10 px-2 sm:px-3">
               <Globe className="w-5 h-5" />
-              {/* Added a span for better control and screen-reader text */}
               <span className="ms-2 hidden sm:inline">{t('language.toggle')}</span>
               <span className="sr-only">Toggle Language</span>
             </Button>
@@ -78,23 +89,30 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 border-t border-white/20 animate-fade-in">
             <nav className="flex flex-col gap-y-4 mt-4">
-              <Link to="/" className="text-blue-100 hover:text-white py-2" onClick={closeMenu}>{t('nav.home')}</Link>
-              <Link to="/services" className="text-blue-100 hover:text-white py-2" onClick={closeMenu}>{t('nav.services')}</Link>
-              <Link to="/about" className="text-blue-100 hover:text-white py-2" onClick={closeMenu}>{t('nav.about')}</Link>
-              <Link to="/contact" className="text-blue-100 hover:text-white py-2" onClick={closeMenu}>{t('nav.contact')}</Link>
-              <div className="border-t border-white/10 pt-4">
-                <h3 className="text-white font-semibold mb-2">{t('nav.countries')}</h3>
-                <div className="flex flex-col gap-y-2">
-                    {countries.map((country) => (
-                       <Link key={country.path} to={country.path} className="block text-blue-200 hover:text-white py-1" onClick={closeMenu}>
-                         {country.name}
-                       </Link>
-                    ))}
+              {navLinks.map((link) => (
+                <div key={link.labelKey}>
+                  {link.children ? (
+                    <div>
+                      <h3 className="text-white font-semibold mb-2">{t(link.labelKey)}</h3>
+                      <div className="flex flex-col gap-y-2 ps-4">
+                          {link.children.map((child) => (
+                            <Link key={child.path} to={child.path} className="block text-blue-200 hover:text-white py-1" onClick={closeMenu}>
+                              {t(child.labelKey)}
+                            </Link>
+                          ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link to={link.path} className="text-blue-100 hover:text-white py-2" onClick={closeMenu}>
+                      {t(link.labelKey)}
+                    </Link>
+                  )}
                 </div>
-              </div>
+              ))}
             </nav>
           </div>
         )}
