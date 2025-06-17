@@ -110,6 +110,8 @@ export function generateServicePageSEO(
   const serviceName = language === 'ar' ? service.nameAr : service.name;
   const cityName = language === 'ar' ? city.nameAr : city.name;
   const countryName = language === 'ar' ? country.nameAr : country.name;
+  const baseUrl = getBaseUrl();
+  const canonical = `/${country.slug}/${city.slug}/${service.slug}`;
 
   const title = language === 'ar' 
     ? `${serviceName} في ${cityName} | خدمة احترافية 24/7 | ${countryName}`
@@ -129,39 +131,54 @@ export function generateServicePageSEO(
     '24/7'
   ];
 
-  const canonical = `/${country.slug}/${city.slug}/${service.slug}`;
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${baseUrl}/` },
+      { "@type": "ListItem", "position": 2, "name": countryName, "item": `${baseUrl}/${country.slug}` },
+      { "@type": "ListItem", "position": 3, "name": cityName, "item": `${baseUrl}/${country.slug}/${city.slug}` },
+      { "@type": "ListItem", "position": 4, "name": serviceName, "item": `${baseUrl}${canonical}` }
+    ]
+  };
 
-  // This schema will be enhanced in a future step.
-  const schemaMarkup = {
+  const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": `${serviceName} in ${cityName}`,
-    "description": language === 'ar' ? service.descriptionAr : service.description,
+    "name": `LocalServices - ${cityName}`,
+    "image": `${baseUrl}/images/services/${service.slug}.jpg`, // Assumes an image path convention
     "address": {
       "@type": "PostalAddress",
       "addressLocality": cityName,
-      "addressRegion": cityName,
-      "addressCountry": countryName
+      "addressRegion": city.region,
+      "addressCountry": country.code
     },
     "telephone": city.phoneNumbers[0],
-    "priceRange": "$$",
+    "priceRange": "$$", // This can be made dynamic later
     "openingHours": "Mo-Su 00:00-23:59",
-    "areaServed": {
-      "@type": "City",
-      "name": cityName
+    // Nest the specific service being offered
+    "makesOffer": {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": serviceName,
+        "serviceType": service.category,
+        "description": language === 'ar' ? service.fullDescriptionAr : service.fullDescription,
+        "areaServed": {
+          "@type": "City",
+          "name": cityName
+        },
+        "provider": {
+          "@id": `${baseUrl}#organization` // Link back to the main organization
+        }
+      },
+      "priceCurrency": getCurrencyByCountry(country.code),
+      "price": service.basePrice
     },
-    "serviceType": serviceName,
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "150",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "offers": {
-      "@type": "Offer",
-      "availability": "https://schema.org/InStock",
-      "priceCurrency": getCurrencyByCountry(country.code)
+      "ratingValue": service.rating,
+      "reviewCount": service.reviewCount
     }
   };
 
@@ -170,7 +187,7 @@ export function generateServicePageSEO(
     description,
     keywords,
     canonical,
-    schemaMarkup
+    schemaMarkup: [breadcrumbSchema, localBusinessSchema]
   };
 }
 
